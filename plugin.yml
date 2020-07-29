@@ -6,7 +6,7 @@ author: Michael Fatemi
 commands:
     blockshuffle:
         description: Starts or stops a block shuffle round
-        usage: /blockshuffle <start|stop>
+        usage: /blockshuffle <start|stop|pause|unpause>
     blockshufflespeed:
         description: Sets the speed of each block shuffle round, or tells you the current time per round
         usage: /blockshufflespeed [seconds per round]

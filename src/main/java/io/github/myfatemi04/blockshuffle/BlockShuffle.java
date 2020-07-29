@@ -29,14 +29,6 @@ public final class BlockShuffle extends JavaPlugin {
 		return paused;
 	}
 	
-	public void reset() {
-		this.tickCount = 0;
-	}
-	
-	public boolean timeLimitReached() {
-		return this.tickCount > this.ticksPerRound;
-	}
-	
 	public void nextRound() {
 		this.tickCount = 0;
 		this.roundCount += 1;
@@ -243,8 +235,20 @@ public final class BlockShuffle extends JavaPlugin {
 					}
 					
 					return true;
-				} else {
-					return false;
+				} else if (args[0].equals("pause")) {
+					if (paused) {
+						sender.sendMessage("Block Shuffle is already paused");
+					} else {
+						Bukkit.broadcastMessage(ChatColor.BOLD + sender.getName() + " has paused the game");
+						pauseGame();
+					}
+				} else if (args[0].equals("unpause")) {
+					if (!paused) {
+						sender.sendMessage("Block Shuffle is not paused");
+					} else {
+						Bukkit.broadcastMessage(ChatColor.BOLD + sender.getName() + " has unpaused the game");
+						unpauseGame();
+					}
 				}
 			}
 		} else if (cmd.getName().equalsIgnoreCase("blockshufflespeed")) {
