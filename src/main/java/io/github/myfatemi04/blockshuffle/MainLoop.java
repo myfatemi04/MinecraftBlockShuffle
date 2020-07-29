@@ -79,11 +79,11 @@ public class MainLoop extends BukkitRunnable {
 				Material standingOn = p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
 				
 				if (standingOn.equals(targetMaterial)) {
+					Bukkit.broadcastMessage(ChatColor.BOLD + p.getName() + " found their block!");
 					p.setMetadata("blockshuffle_foundblock", plugin.META_TRUE);
 					foundBlocks += 1;
 				}
 				
-				Bukkit.broadcastMessage(ChatColor.BOLD + p.getName() + " found their block!");
 			}
 			
 			if (foundBlocks == searchingPlayers.size()) {

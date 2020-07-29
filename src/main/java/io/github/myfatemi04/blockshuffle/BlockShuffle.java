@@ -242,6 +242,8 @@ public final class BlockShuffle extends JavaPlugin {
 						Bukkit.broadcastMessage(ChatColor.BOLD + sender.getName() + " has paused the game");
 						pauseGame();
 					}
+					
+					return true;
 				} else if (args[0].equals("unpause")) {
 					if (!paused) {
 						sender.sendMessage("Block Shuffle is not paused");
@@ -249,6 +251,8 @@ public final class BlockShuffle extends JavaPlugin {
 						Bukkit.broadcastMessage(ChatColor.BOLD + sender.getName() + " has unpaused the game");
 						unpauseGame();
 					}
+					
+					return true;
 				}
 			}
 		} else if (cmd.getName().equalsIgnoreCase("blockshufflespeed")) {
