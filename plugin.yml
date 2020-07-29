@@ -12,4 +12,4 @@ commands:
         usage: /blockshufflespeed [seconds per round]
     blockshuffletime:
         description: Tells you how many seconds are left in this round.
-        usage: /blockshuffletime
+        usage: /blockshuffletime [add|remove <seconds>]

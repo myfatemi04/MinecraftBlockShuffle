@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public final class BlockShuffle extends JavaPlugin {
 	private BukkitRunnable mainloop = null;
 	private boolean running = false;
+	private boolean paused = false;
 	private int roundCount = 0;
 	private int tickCount = 0;
 	private int ticksPerRound = 5 * 60 * 20; // By default, 5 minutes per round
@@ -24,16 +25,8 @@ public final class BlockShuffle extends JavaPlugin {
 	public final FixedMetadataValue META_TRUE = new FixedMetadataValue(this, true);
 	public final FixedMetadataValue META_FALSE = new FixedMetadataValue(this, false);
 	
-	public boolean allReached() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (player.hasMetadata("blockshuffle_foundblock")) {
-				if (!player.getMetadata("blockshuffle_foundblock").get(0).asBoolean()) {
-					return false;
-				}
-			}
-		}
-		
-		return true;
+	public boolean isPaused() {
+		return paused;
 	}
 	
 	public void reset() {
@@ -42,16 +35,6 @@ public final class BlockShuffle extends JavaPlugin {
 	
 	public boolean timeLimitReached() {
 		return this.tickCount > this.ticksPerRound;
-	}
-	
-	@Override
-	public void onEnable() {
-		
-	}
-	
-	@Override
-	public void onDisable() {
-		
 	}
 	
 	public void nextRound() {
@@ -180,6 +163,7 @@ public final class BlockShuffle extends JavaPlugin {
 	
 	public void startGame() {
 		running = true;
+		paused = false;
 		mainloop = new MainLoop(this);
 		mainloop.runTaskTimer(this, 0, 1);
 		reviveAll();
@@ -188,8 +172,19 @@ public final class BlockShuffle extends JavaPlugin {
 	
 	public void endGame() {
 		running = false;
+		paused = false;
+		roundCount = 0;
+		tickCount = 0;
 		mainloop.cancel();
 		Bukkit.broadcastMessage("Stopping Block Shuffle");
+	}
+	
+	public void pauseGame() {
+		paused = true;
+	}
+	
+	public void unpauseGame() {
+		paused = false;
 	}
 	
 	/**
@@ -216,7 +211,8 @@ public final class BlockShuffle extends JavaPlugin {
 	}
 	
 	public String formatTickTime(int tickCount) {
-		int rawSeconds = (ticksPerRound - tickCount) / 60;
+		int rawSeconds = tickCount / 20;
+		
 		int minutes = rawSeconds / 60;
 		int seconds = rawSeconds % 60;
 		
@@ -256,12 +252,14 @@ public final class BlockShuffle extends JavaPlugin {
 			
 			if (args.length == 0) {
 				sender.sendMessage("Block Shuffle speed is set to " + formatTickTime(ticksPerRound));
+				return true;
 			} else if (args.length == 1) {
 				try {
 					double seconds = Double.parseDouble(args[0]);
 					this.ticksPerRound = (int)(seconds * 20);
-					
+										
 					sender.sendMessage("Block Shuffle speed successfully updated to " + formatTickTime(ticksPerRound));
+					return true;
 				} catch (NumberFormatException e) {
 					return false;
 				}
@@ -279,6 +277,24 @@ public final class BlockShuffle extends JavaPlugin {
 					sender.sendMessage("Block Shuffle is inactive. To start a round, run /blockshuffle start");
 					
 					return true;
+				}
+			} else if (args.length == 2) {
+				if (args[1].equals("add")) {
+					double seconds = Double.parseDouble(args[0]);
+					int newTicks = (int)(seconds * 20);
+					
+					this.tickCount -= newTicks;
+					
+					Bukkit.broadcastMessage(sender.getName() + " has added " + formatTickTime(tickCount) + " to the round time.");
+					Bukkit.broadcastMessage(ChatColor.BOLD + "New time left: " + formatTickTime(ticksPerRound - tickCount));
+				} else if (args[1].equals("remove")) {
+					double seconds = Double.parseDouble(args[0]);
+					int newTicks = (int)(seconds * 20);
+					
+					this.tickCount += newTicks;
+					
+					Bukkit.broadcastMessage(sender.getName() + " has removed " + formatTickTime(tickCount) + " to the round time");
+					Bukkit.broadcastMessage(ChatColor.BOLD + "New time left: " + formatTickTime(ticksPerRound - tickCount));
 				}
 			}
 		}

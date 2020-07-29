@@ -18,6 +18,10 @@ public class MainLoop extends BukkitRunnable {
 	
 	@Override
 	public void run() {
+		if (plugin.isPaused()) {
+			return;
+		}
+		
 		List<Player> searchingPlayers = plugin.getSearchingPlayers();
 		List<Player> alivePlayers = plugin.getAlivePlayers();
 		
