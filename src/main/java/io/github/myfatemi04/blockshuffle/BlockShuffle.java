@@ -224,6 +224,10 @@ public final class BlockShuffle extends JavaPlugin {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("blockshuffle")) {
+			if (args.length == 0) {
+				return false;
+			}
+			
 			// starts a round of Block Shuffle
 			if (args[0].equals("start")) {
 				if (running) {

@@ -40,6 +40,7 @@ public class MainLoop extends BukkitRunnable {
 				// If some players didn't find their blocks, then they get eliminated
 				for (Player p : searchingPlayers) {
 					plugin.eliminatePlayer(p);
+					p.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "You have lost a life, " + plugin.getLives(p) + " lives left");
 				}
 				
 				List<Player> safePlayers = plugin.getAlivePlayers();
@@ -52,7 +53,12 @@ public class MainLoop extends BukkitRunnable {
 					plugin.endGame();
 				} else {
 					Bukkit.broadcastMessage(ChatColor.BOLD + "" + safePlayers.size() + " players remain!");
-				
+					Bukkit.broadcastMessage(ChatColor.BOLD + "---- Leaderboard ----");
+					
+					for (Player player : safePlayers) {
+						Bukkit.broadcastMessage(player.getName() + " - " + plugin.getLives(player) + " lives");
+					}
+					
 					plugin.nextRound();
 				}
 			}
