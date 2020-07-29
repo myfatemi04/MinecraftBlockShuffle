@@ -1,0 +1,15 @@
+name: BlockShuffle
+main: io.github.myfatemi04.blockshuffle.BlockShuffle
+version: 0.0.1
+api-version: 1.15
+author: Michael Fatemi
+commands:
+    blockshuffle:
+        description: Starts or stops a block shuffle round
+        usage: /blockshuffle <start|stop>
+    blockshufflespeed:
+        description: Sets the speed of each block shuffle round, or tells you the current time per round
+        usage: /blockshufflespeed [seconds per round]
+    blockshuffletime:
+        description: Tells you how many seconds are left in this round.
+        usage: /blockshuffletime
