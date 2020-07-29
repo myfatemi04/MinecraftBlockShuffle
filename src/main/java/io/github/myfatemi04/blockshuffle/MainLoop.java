@@ -82,6 +82,8 @@ public class MainLoop extends BukkitRunnable {
 					p.setMetadata("blockshuffle_foundblock", plugin.META_TRUE);
 					foundBlocks += 1;
 				}
+				
+				Bukkit.broadcastMessage(ChatColor.BOLD + p.getName() + " found their block!");
 			}
 			
 			if (foundBlocks == searchingPlayers.size()) {
