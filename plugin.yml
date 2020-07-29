@@ -5,8 +5,8 @@ api-version: 1.15
 author: Michael Fatemi
 commands:
     blockshuffle:
-        description: Starts or stops a block shuffle round
-        usage: /blockshuffle <start|stop|pause|unpause>
+        description: Starts or stops a block shuffle round. You can choose how many lives each person gets with /blockshuffle start <lives>.
+        usage: /blockshuffle <start <lives>|stop|pause|unpause|me>
     blockshufflespeed:
         description: Sets the speed of each block shuffle round, or tells you the current time per round
         usage: /blockshufflespeed [seconds per round]
