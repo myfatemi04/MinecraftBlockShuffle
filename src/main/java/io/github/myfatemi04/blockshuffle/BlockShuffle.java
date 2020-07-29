@@ -77,6 +77,8 @@ public final class BlockShuffle extends JavaPlugin {
 			"END",
 			"HEAD",
 			"CORAL",
+			"BANNER",
+			"STAINED_GLASS"
 		};
 		
 		search: while (true) {
@@ -223,7 +225,7 @@ public final class BlockShuffle extends JavaPlugin {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("blockshuffle")) {
+		if (cmd.getName().equalsIgnoreCase("blockshuffle") || cmd.getName().equalsIgnoreCase("bs")) {
 			if (args.length == 0) {
 				return false;
 			}
@@ -269,72 +271,81 @@ public final class BlockShuffle extends JavaPlugin {
 				
 				return true;
 			} else if (args[0].equals("me")) {
-				if (!((Player) sender).hasMetadata("blockshuffle_material")) {
-					sender.sendMessage("You don't have a material yet, or a game has not been started yet");
+				if (!running) {
+					sender.sendMessage("The game is not running currently");
 				} else {
-					int lives = getLives((Player) sender);
-					Material material = (Material)(((Player) sender).getMetadata("blockshuffle_material").get(0).value());
-					
-					sender.sendMessage("You have " + lives + " lives, your material is " + material.toString().replace("_", " "));					
+					if (!((Player) sender).hasMetadata("blockshuffle_material")) {
+						sender.sendMessage("You don't have a material yet, or a game has not been started yet");
+					} else {
+						int lives = getLives((Player) sender);
+						Material material = (Material)(((Player) sender).getMetadata("blockshuffle_material").get(0).value());
+						
+						sender.sendMessage("You have " + lives + " lives, your material is " + material.toString().replace("_", " "));					
+					}					
 				}
 				
 				return true;
-			}
-		} else if (cmd.getName().equalsIgnoreCase("blockshufflespeed")) {
-			// sets the speed of each block shuffle round
-			
-			if (args.length == 0) {
-				sender.sendMessage("Block Shuffle speed is set to " + formatTickTime(ticksPerRound));
-				return true;
-			} else if (args.length == 1) {
-				try {
-					double seconds = Double.parseDouble(args[0]);
-					this.ticksPerRound = (int)(seconds * 20);
-										
-					sender.sendMessage("Block Shuffle speed successfully updated to " + formatTickTime(ticksPerRound));
-					return true;
-				} catch (NumberFormatException e) {
-					return false;
-				}
-			}
-		} else if (cmd.getName().equalsIgnoreCase("blockshuffletime")) {
-			// gets the time left in this round
-			
-			if (args.length == 0) {
-				if (this.running) {
-					sender.sendMessage(formatTickTime(ticksPerRound - tickCount) + " until this round ends");
+			} else if (args[0].equals("reroll")) {
+				for (Player player : getSearchingPlayers()) {
+					assignMaterial(player);
 					
-					return true;
-				} else {
-					sender.sendMessage("Block Shuffle is inactive. To start a round, run /blockshuffle start");
-					
+					Bukkit.broadcastMessage(ChatColor.BOLD + sender.getName() + " has rerolled the blocks");
 					return true;
 				}
-			} else if (args.length == 2) {
-				try {
-					if (args[0].equals("add")) {
+			} else if (args[0].equals("speed")) {
+				// sets the speed of each block shuffle round
+				
+				if (args.length == 1) {
+					sender.sendMessage("Block Shuffle speed is set to " + formatTickTime(ticksPerRound));
+					return true;
+				} else if (args.length == 2) {
+					try {
 						double seconds = Double.parseDouble(args[1]);
-						int newTicks = (int)(seconds * 20);
-						
-						this.tickCount -= newTicks;
-						
-						Bukkit.broadcastMessage(sender.getName() + " has added " + formatTickTime(newTicks) + " to the round time.");
-						Bukkit.broadcastMessage(ChatColor.BOLD + "New time left: " + formatTickTime(ticksPerRound - tickCount));
+						this.ticksPerRound = (int)(seconds * 20);
+											
+						sender.sendMessage("Block Shuffle speed successfully updated to " + formatTickTime(ticksPerRound));
+						return true;
+					} catch (NumberFormatException e) {
+						return false;
+					}
+				}
+			} else if (args[0].equals("time")) {
+				if (args.length == 1) {
+					if (this.running) {
+						sender.sendMessage(formatTickTime(ticksPerRound - tickCount) + " until this round ends");
 						
 						return true;
-					} else if (args[0].equals("remove")) {
-						double seconds = Double.parseDouble(args[1]);
-						int newTicks = (int)(seconds * 20);
-						
-						this.tickCount += newTicks;
-						
-						Bukkit.broadcastMessage(sender.getName() + " has removed " + formatTickTime(tickCount) + " to the round time");
-						Bukkit.broadcastMessage(ChatColor.BOLD + "New time left: " + formatTickTime(ticksPerRound - tickCount));
+					} else {
+						sender.sendMessage("Block Shuffle is inactive. To start a round, run /blockshuffle start");
 						
 						return true;
 					}
-				} catch (NumberFormatException e) {
-					return false;
+				} else if (args.length == 3) {
+					try {
+						if (args[1].equals("add")) {
+							double seconds = Double.parseDouble(args[2]);
+							int newTicks = (int)(seconds * 20);
+							
+							this.tickCount -= newTicks;
+							
+							Bukkit.broadcastMessage(sender.getName() + " has added " + formatTickTime(newTicks) + " to the round time.");
+							Bukkit.broadcastMessage(ChatColor.BOLD + "New time left: " + formatTickTime(ticksPerRound - tickCount));
+							
+							return true;
+						} else if (args[1].equals("remove")) {
+							double seconds = Double.parseDouble(args[2]);
+							int newTicks = (int)(seconds * 20);
+							
+							this.tickCount += newTicks;
+							
+							Bukkit.broadcastMessage(sender.getName() + " has removed " + formatTickTime(newTicks) + " to the round time");
+							Bukkit.broadcastMessage(ChatColor.BOLD + "New time left: " + formatTickTime(ticksPerRound - tickCount));
+							
+							return true;
+						}
+					} catch (NumberFormatException e) {
+						return false;
+					}
 				}
 			}
 		}
