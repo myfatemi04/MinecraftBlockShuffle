@@ -8,4 +8,4 @@ commands:
         description: Starts or stops a block shuffle round. You can choose how many lives each person gets with /blockshuffle start <lives>.
         usage: /blockshuffle <start <lives>|stop|pause|unpause|me|speed [new-round-speed]|time [add|remove <time>]>
     bs:
-    	description: Alias for /blockshuffle
+        description: Alias for /blockshuffle

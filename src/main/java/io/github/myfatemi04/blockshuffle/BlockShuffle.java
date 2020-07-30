@@ -116,6 +116,14 @@ public final class BlockShuffle extends JavaPlugin {
 		player.setMetadata("blockshuffle_lives", new FixedMetadataValue(this, lives));
 	}
 	
+	public int getPoints(Player player) {
+		return player.getMetadata("blockshuffle_points").get(0).asInt();
+	}
+	
+	public void setPoints(Player player, int points) {
+		player.setMetadata("blockshuffle_points", new FixedMetadataValue(this, points));
+	}
+	
 	public List<Player> getAlivePlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
 		for (Player player : Bukkit.getOnlinePlayers()) {
@@ -155,6 +163,12 @@ public final class BlockShuffle extends JavaPlugin {
 		}
 	}
 	
+	public void resetPointsAll() {
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			setPoints(p, 0);
+		}
+	}
+	
 	public void resetFound() {
 		for (Player player : getAlivePlayers()) {
 			player.setMetadata("blockshuffle_foundblock", META_FALSE);
@@ -169,7 +183,10 @@ public final class BlockShuffle extends JavaPlugin {
 		paused = false;
 		mainloop = new MainLoop(this);
 		mainloop.runTaskTimer(this, 0, 1);
+		
 		reviveAll(lives);
+		resetPointsAll();
+		
 		nextRound();
 	}
 	
@@ -286,12 +303,13 @@ public final class BlockShuffle extends JavaPlugin {
 				
 				return true;
 			} else if (args[0].equals("reroll")) {
-				for (Player player : getSearchingPlayers()) {
+				for (Player player : getAlivePlayers()) {
 					assignMaterial(player);
-					
-					Bukkit.broadcastMessage(ChatColor.BOLD + sender.getName() + " has rerolled the blocks");
-					return true;
 				}
+				
+				Bukkit.broadcastMessage(ChatColor.BOLD + sender.getName() + " has rerolled the blocks");
+				return true;
+				
 			} else if (args[0].equals("speed")) {
 				// sets the speed of each block shuffle round
 				

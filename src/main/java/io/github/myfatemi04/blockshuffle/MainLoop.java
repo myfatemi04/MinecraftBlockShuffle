@@ -56,7 +56,7 @@ public class MainLoop extends BukkitRunnable {
 					Bukkit.broadcastMessage(ChatColor.BOLD + "---- Leaderboard ----");
 					
 					for (Player player : safePlayers) {
-						Bukkit.broadcastMessage(player.getName() + " - " + plugin.getLives(player) + " lives");
+						Bukkit.broadcastMessage(player.getName() + " - " + plugin.getPoints(player) + ", " + plugin.getLives(player) + " lives");
 					}
 					
 					plugin.nextRound();
@@ -87,6 +87,7 @@ public class MainLoop extends BukkitRunnable {
 				if (standingOn.equals(targetMaterial)) {
 					Bukkit.broadcastMessage(ChatColor.BOLD + p.getName() + " found their block!");
 					p.setMetadata("blockshuffle_foundblock", plugin.META_TRUE);
+					plugin.setPoints(p, plugin.getPoints(p) + 1);
 					foundBlocks += 1;
 				}
 				
